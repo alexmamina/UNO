@@ -24,6 +24,7 @@ public class GameInterface extends JFrame {
             JButton b = (JButton) e.getSource();
             Card lastCard = Deck.getCard((ImageIcon) played.getIcon());
             Card newCard = Deck.getCard((ImageIcon) b.getIcon());
+            //On new game deck is null
             boolean sameColor = color.equals(newCard.name.substring(0,3));
             boolean sameType = lastCard.name.substring(3,4).equals(
                     newCard.name.substring(3,4));
@@ -38,23 +39,29 @@ public class GameInterface extends JFrame {
                 color = newCard.name.substring(0,3);
 
                 if (newCard.name.contains("black")) {
-                   String inp = JOptionPane.showInputDialog("Select the colour you want:\n" +
-                            "1. Red\n2. Green\n3. Blue\n4. Yellow");
-                   switch (Integer.parseInt(inp)) {
-                       case 1:
-                           JOptionPane.showMessageDialog(null, "Red");
-                           color = "red";
-                           break;
-                       case 2:
-                           JOptionPane.showMessageDialog(null, "Green");
-                           color = "gre"; break;
-                       case 3:
-                           JOptionPane.showMessageDialog(null, "Blue");
-                           color = "blu"; break;
-                       case 4:
-                           JOptionPane.showMessageDialog(null, "Yellow");
-                           color = "yel"; break;
-                       default: JOptionPane.showMessageDialog(null, "Wrong number");
+                    String[] cols = {"Green", "Blue", "Yellow", "Red"};
+                    int inp = JOptionPane.showOptionDialog(null,"Select the colour you want",
+                            "Choose colour",JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                            null, cols, null);
+                    switch (inp) {
+                        case 3:
+                            JOptionPane.showMessageDialog(null, "Red");
+                            color = "red";
+                            break;
+                        case 2:
+                            JOptionPane.showMessageDialog(null, "Yellow");
+                            color = "yel";
+                            break;
+                        case 1:
+                            JOptionPane.showMessageDialog(null, "Blue");
+                            color = "blu";
+                            break;
+                        case 0:
+                            JOptionPane.showMessageDialog(null, "Green");
+                            color = "gre";
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null, "Wrong number");
                    }
                 }
             } else JOptionPane.showMessageDialog(null, "Wrong card!");
@@ -197,12 +204,13 @@ public class GameInterface extends JFrame {
         JPanel center = new JPanel();
         pile = new JButton();
         pile.setPreferredSize(new Dimension(78,122));
-     //   pile.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.BLACK));
+        pile.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.BLACK));
         pile.setIcon(Deck.back);
         pile.setOpaque(true);
         pile.addActionListener(e -> {
             Card newcard = Game.cardQueue.remove();
             JButton ncard = new JButton(newcard.image);
+            //ncard.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.BLACK));
             ncard.addActionListener(go);
             handpanel.add(ncard,0);
             numcards.setText("Cards left: "+ handpanel.getComponents().length);
@@ -218,7 +226,7 @@ public class GameInterface extends JFrame {
         center.add(pile);
         played = new JButton();
         played.setPreferredSize(new Dimension(78,122));
-       // played.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.BLACK));
+        played.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.BLACK));
         played.setOpaque(true);
         center.add(new JLabel("    "));
         center.add(played);
@@ -227,24 +235,26 @@ public class GameInterface extends JFrame {
         color = start.name.substring(0,3);
         if (color.equals("bla")) {
             //TODO make this dependent on whose turn it is now
-            String inp = JOptionPane.showInputDialog("Select the colour you want:\n" +
-                    "1. Red\n2. Green\n3. Blue\n4. Yellow");
-            switch (Integer.parseInt(inp)) {
-                case 1:
+            String[] cols = {"Green", "Blue", "Yellow", "Red"};
+            int inp = JOptionPane.showOptionDialog(null,"Select the colour you want",
+                    "Choose colour",JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, cols, null);
+            switch (inp) {
+                case 3:
                     JOptionPane.showMessageDialog(null, "Red");
                     color = "red";
                     break;
                 case 2:
-                    JOptionPane.showMessageDialog(null, "Green");
-                    color = "gre";
+                    JOptionPane.showMessageDialog(null, "Yellow");
+                    color = "yel";
                     break;
-                case 3:
+                case 1:
                     JOptionPane.showMessageDialog(null, "Blue");
                     color = "blu";
                     break;
-                case 4:
-                    JOptionPane.showMessageDialog(null, "Yellow");
-                    color = "yel";
+                case 0:
+                    JOptionPane.showMessageDialog(null, "Green");
+                    color = "gre";
                     break;
                 default:
                     JOptionPane.showMessageDialog(null, "Wrong number");
@@ -262,6 +272,7 @@ public class GameInterface extends JFrame {
         for (int i = 0; i < 7; i++) {
             JButton b = new JButton(cards[i].image);
             b.addActionListener(go);
+          //  b.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.BLACK));
             handpanel.add(b);
         }
         JScrollPane mycards = new JScrollPane(handpanel);
@@ -290,15 +301,17 @@ public class GameInterface extends JFrame {
 
     }
 
-    public void newGame() {
+    //TODO fix new game:something is empty (deck or color)
+    private void newGame() {
         GameInterface nG = new GameInterface();
         nG.setVisible(true);
         setVisible(false);
     }
 
-    public void closeWindow() {
+    private void closeWindow() {
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
+
     public static void main(String[] args) {
         GameInterface g = new GameInterface();
         g.setVisible(true);
