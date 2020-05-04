@@ -3,7 +3,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Game {
 
-
+    static ArrayList<Info> serverInfos = new ArrayList<>();
 
     private static Queue<Card> createQueue() {
         Deck.getDeck();

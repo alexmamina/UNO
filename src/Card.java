@@ -1,7 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 
-public class Card {
+public class Card implements Serializable {
 
     ImageIcon image;
     String name;
@@ -13,9 +14,6 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Card{" +
-                "image=" + image +
-                ", name='" + name + '\'' +
-                '}';
+        return "Card " + name;
     }
 }

@@ -11,20 +11,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class GameInterface extends JFrame {
+public abstract class GameInterface extends JFrame {
     //TODO add leaderboard and save scores to file
-    String color = "";
+
+    public String color = "";
     JLabel numcards;
-    JButton pile, played;
+    JButton pile;
+    static JButton played;
     ArrayList<Card> playedCards = new ArrayList<>();
-    JPanel handpanel = new JPanel();
+    static JPanel handpanel = new JPanel();
     ActionListener go = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton b = (JButton) e.getSource();
             Card lastCard = Deck.getCard((ImageIcon) played.getIcon());
             Card newCard = Deck.getCard((ImageIcon) b.getIcon());
-            //On new game deck is null
+            //On new game cards are not found as ids are different
+            System.out.println(lastCard);
             boolean sameColor = color.equals(newCard.name.substring(0,3));
             boolean sameType = lastCard.name.substring(3,4).equals(
                     newCard.name.substring(3,4));
@@ -75,9 +78,9 @@ public class GameInterface extends JFrame {
         }
     };
 
-    GridBagConstraints constraints = new GridBagConstraints();
+    public GridBagConstraints constraints = new GridBagConstraints();
 
-    public GameInterface() {
+    public GameInterface(int client) {
         setSize(800,600);
         setTitle("UNO");
         setBackground(Color.white);
@@ -85,13 +88,13 @@ public class GameInterface extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
         setTopPart();
-        setPiles();
+        setPiles(client);
         addMenu();
         setHand();
-
+        Game.serverInfos.add(new Info(Game.cardQueue, Deck.getCard((ImageIcon) played.getIcon())));
     }
 
-    private void addMenu() {
+    void addMenu() {
         JMenuBar bar = new JMenuBar();
         JMenu menu = new JMenu("Menu");
         JMenu gamemode = new JMenu("Game mode");
@@ -99,14 +102,12 @@ public class GameInterface extends JFrame {
         JMenuItem rules = new JMenuItem("Game rules");
         rules.addActionListener(e -> {
             Desktop desktop = Desktop.getDesktop();
-            URI rulesWeb = null;
+            URI rulesWeb;
             try {
                 rulesWeb = new URI("https://en.wikipedia.org/wiki/Uno_(card_game)#Official_rules");
+                desktop.browse(rulesWeb);
             } catch (URISyntaxException ex) {
                 ex.printStackTrace();
-            }
-            try {
-                desktop.browse(rulesWeb);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -132,7 +133,7 @@ public class GameInterface extends JFrame {
 
                 }
                 JOptionPane.showMessageDialog(null, "Your score is: "+
-                        Integer.toString(result));
+                        result);
             }
         });
         //TODO change rules based on game mode: whose turn it is now; or swap hands
@@ -176,12 +177,16 @@ public class GameInterface extends JFrame {
 
         JButton uno = new JButton("UNO!!");
         uno.addActionListener(e -> {
+            Game.serverInfos.add(new Info(1,
+                    Deck.getCard((ImageIcon) played.getIcon()),"uno"));
             //TODO make message show on all computers, include what computer has uno
             JOptionPane.showMessageDialog(null, "Player said UNO");
         });
 
         JButton challenge = new JButton("Someone didn't say UNO!");
         challenge.addActionListener(e -> {
+            Game.serverInfos.add(new Info(handpanel.getComponents().length,
+                    Deck.getCard((ImageIcon) played.getIcon()), "challenge"));
             //TODO send message to previous player saying they have to take more cards
             JOptionPane.showMessageDialog(null, "Someone didn't say UNO!!");
         });
@@ -199,7 +204,7 @@ public class GameInterface extends JFrame {
         setJMenuBar(bar);
     }
 
-    private void setPiles() {
+    void setPiles(int client) {
         Deck.getDeck();
         JPanel center = new JPanel();
         pile = new JButton();
@@ -230,43 +235,48 @@ public class GameInterface extends JFrame {
         played.setOpaque(true);
         center.add(new JLabel("    "));
         center.add(played);
-        Card start = Game.cardQueue.remove();
-        played.setIcon(start.image);
-        color = start.name.substring(0,3);
-        if (color.equals("bla")) {
-            //TODO make this dependent on whose turn it is now
-            String[] cols = {"Green", "Blue", "Yellow", "Red"};
-            int inp = JOptionPane.showOptionDialog(null,"Select the colour you want",
-                    "Choose colour",JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-                    null, cols, null);
-            switch (inp) {
-                case 3:
-                    JOptionPane.showMessageDialog(null, "Red");
-                    color = "red";
-                    break;
-                case 2:
-                    JOptionPane.showMessageDialog(null, "Yellow");
-                    color = "yel";
-                    break;
-                case 1:
-                    JOptionPane.showMessageDialog(null, "Blue");
-                    color = "blu";
-                    break;
-                case 0:
-                    JOptionPane.showMessageDialog(null, "Green");
-                    color = "gre";
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(null, "Wrong number");
+        if (client == 0) {
+            Card start = Game.cardQueue.remove();
+            played.setIcon(start.image);
+            Game.serverInfos.add(new Info(Game.cardQueue, start));
+            color = start.name.substring(0, 3);
+            if (color.equals("bla")) {
+                //TODO make this dependent on whose turn it is now
+                String[] cols = {"Green", "Blue", "Yellow", "Red"};
+                int inp = JOptionPane.showOptionDialog(null, "Select the colour you want",
+                        "Choose colour", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                        null, cols, null);
+                switch (inp) {
+                    case 3:
+                        JOptionPane.showMessageDialog(null, "Red");
+                        color = "red";
+                        break;
+                    case 2:
+                        JOptionPane.showMessageDialog(null, "Yellow");
+                        color = "yel";
+                        break;
+                    case 1:
+                        JOptionPane.showMessageDialog(null, "Blue");
+                        color = "blu";
+                        break;
+                    case 0:
+                        JOptionPane.showMessageDialog(null, "Green");
+                        color = "gre";
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(null, "Wrong number");
+                }
             }
+            playedCards.add(start);
+        } else {
+          //  played.setIcon(Game.serverInfos.get(Game.serverInfos.size()-1).getPlayed().image);
+            color = color;
         }
-        playedCards.add(start);
-
         constraints.anchor = GridBagConstraints.CENTER;
         add(center);
     }
 
-    private void setHand() {
+    void setHand() {
         Card[] cards = Game.dealCards();
 
         for (int i = 0; i < 7; i++) {
@@ -288,7 +298,7 @@ public class GameInterface extends JFrame {
         numcards.setText("Cards left: "+ handpanel.getComponents().length);
     }
 
-    private void setTopPart() {
+    void setTopPart() {
 
 
         numcards = new JLabel();
@@ -303,8 +313,8 @@ public class GameInterface extends JFrame {
 
     //TODO fix new game:something is empty (deck or color)
     private void newGame() {
-        GameInterface nG = new GameInterface();
-        nG.setVisible(true);
+       // GameInterface nG = new GameInterface();
+       // nG.setVisible(true);
         setVisible(false);
     }
 
@@ -313,7 +323,5 @@ public class GameInterface extends JFrame {
     }
 
     public static void main(String[] args) {
-        GameInterface g = new GameInterface();
-        g.setVisible(true);
     }
 }
