@@ -14,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class GameInterface extends JFrame {
     //TODO add leaderboard and save scores to file
 
-    public String color = "";
+    static String color = "";
     JLabel numcards;
     JButton pile;
     static JButton played;
@@ -24,16 +24,17 @@ public abstract class GameInterface extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton b = (JButton) e.getSource();
-            Card lastCard = Deck.getCard((ImageIcon) played.getIcon());
-            Card newCard = Deck.getCard((ImageIcon) b.getIcon());
-            //On new game cards are not found as ids are different
-            System.out.println(lastCard);
+            Card lastCard = Deck.getCard(played.getName());
+            Card newCard = Deck.getCard(b.getName());
+
+            System.out.println(played.getName());
             boolean sameColor = color.equals(newCard.name.substring(0,3));
             boolean sameType = lastCard.name.substring(3,4).equals(
                     newCard.name.substring(3,4));
             JPanel parent = (JPanel) b.getParent();
             if (sameColor || sameType || newCard.name.contains("black")) {
                 played.setIcon(b.getIcon());
+                played.setName(b.getName());
                 playedCards.add(newCard);
                 parent.remove(b);
                 parent.revalidate();
@@ -91,7 +92,7 @@ public abstract class GameInterface extends JFrame {
         setPiles(client);
         addMenu();
         setHand();
-        Game.serverInfos.add(new Info(Game.cardQueue, Deck.getCard((ImageIcon) played.getIcon())));
+        Game.serverInfos.add(new Info(Game.cardQueue, Deck.getCard(played.getName())));
     }
 
     void addMenu() {
@@ -125,7 +126,7 @@ public abstract class GameInterface extends JFrame {
             if (calculateScore == JOptionPane.NO_OPTION) {
                 int result = 0;
                 for (Component b : handpanel.getComponents()) {
-                    String name = Deck.getCardName((ImageIcon)((JButton) b).getIcon());
+                    String name = b.getName();
                     if (name.contains("black")) result += 50;
                     else if (name.contains("reverse") || name.contains("stop") ||
                             name.contains("two")) result += 20;
@@ -178,7 +179,7 @@ public abstract class GameInterface extends JFrame {
         JButton uno = new JButton("UNO!!");
         uno.addActionListener(e -> {
             Game.serverInfos.add(new Info(1,
-                    Deck.getCard((ImageIcon) played.getIcon()),"uno"));
+                    Deck.getCard(played.getName()),"uno"));
             //TODO make message show on all computers, include what computer has uno
             JOptionPane.showMessageDialog(null, "Player said UNO");
         });
@@ -186,7 +187,7 @@ public abstract class GameInterface extends JFrame {
         JButton challenge = new JButton("Someone didn't say UNO!");
         challenge.addActionListener(e -> {
             Game.serverInfos.add(new Info(handpanel.getComponents().length,
-                    Deck.getCard((ImageIcon) played.getIcon()), "challenge"));
+                    Deck.getCard(played.getName()), "challenge"));
             //TODO send message to previous player saying they have to take more cards
             JOptionPane.showMessageDialog(null, "Someone didn't say UNO!!");
         });
@@ -215,6 +216,7 @@ public abstract class GameInterface extends JFrame {
         pile.addActionListener(e -> {
             Card newcard = Game.cardQueue.remove();
             JButton ncard = new JButton(newcard.image);
+            ncard.setName(newcard.name);
             //ncard.setBorder(BorderFactory.createMatteBorder(1,1,1,1,Color.BLACK));
             ncard.addActionListener(go);
             handpanel.add(ncard,0);
@@ -238,6 +240,7 @@ public abstract class GameInterface extends JFrame {
         if (client == 0) {
             Card start = Game.cardQueue.remove();
             played.setIcon(start.image);
+            played.setName(start.name);
             Game.serverInfos.add(new Info(Game.cardQueue, start));
             color = start.name.substring(0, 3);
             if (color.equals("bla")) {
@@ -283,6 +286,7 @@ public abstract class GameInterface extends JFrame {
             JButton b = new JButton(cards[i].image);
             b.addActionListener(go);
           //  b.setBorder(BorderFactory.createMatteBorder(1,1,1,1, Color.BLACK));
+            b.setName(cards[i].name);
             handpanel.add(b);
         }
         JScrollPane mycards = new JScrollPane(handpanel);
@@ -311,10 +315,9 @@ public abstract class GameInterface extends JFrame {
 
     }
 
-    //TODO fix new game:something is empty (deck or color)
     private void newGame() {
-       // GameInterface nG = new GameInterface();
-       // nG.setVisible(true);
+        GameInterface nG = new Server();
+        nG.setVisible(true);
         setVisible(false);
     }
 

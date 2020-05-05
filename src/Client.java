@@ -1,17 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Collections;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
+
 
 public class Client extends GameInterface{
 
-    static Queue queue;
     public Client() {
         super(1);
         setTitle("UNO - client");
@@ -21,14 +17,14 @@ public class Client extends GameInterface{
 
     public static void main(String[] args) {
         Client g = new Client();
-        g.setVisible(true);
+
         String hostName = "localhost";
         int portNumber = 4444;
 
         try (
                 Socket s = new Socket(hostName, portNumber);
                 ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+                ObjectInputStream in = new ObjectInputStream(s.getInputStream())
                 ) {
             Object fromServer, fromUser;
 
@@ -38,6 +34,8 @@ public class Client extends GameInterface{
                 System.out.println("Server: " + fromServer.toString());
 
                     played.setIcon(((Info) fromServer).getPlayed().image);
+                    played.setName(((Info) fromServer).getPlayed().name);
+                    GameInterface.color = played.getName().substring(0,3);
                     Game.cardQueue = ((Info) fromServer).getPile();
                 if (Protocol.state == Protocol.BEGINNING) {
                     Card[] cs = Game.dealCards();
@@ -46,6 +44,7 @@ public class Client extends GameInterface{
                     for (Component b : handpanel.getComponents()) {
 
                         ((JButton) b).setIcon(cs[i].image);
+                        b.setName(cs[i].name);
                         System.out.println(i);
                         i++;
                     }
@@ -53,7 +52,7 @@ public class Client extends GameInterface{
                     //fromUser = GameInterface.serverInfos.get(GameInterface.serverInfos.size()-1);
 
                 }
-
+                g.setVisible(true);
                 fromUser = "image set";
                 if (fromUser != null) {
                     System.out.println("Client: " + fromUser.toString());

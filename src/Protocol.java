@@ -23,7 +23,7 @@ public class Protocol {
         Info output = null;
         if (state == BEGINNING) {
             output = new Info(Game.cardQueue,
-                    Deck.getCard((ImageIcon) GameInterface.played.getIcon()));
+                    Deck.getCard(GameInterface.played.getName()));
             //state = MOVE;
         } else if (state == MOVE) {
             //if input has message uno or challenge move accordingly

@@ -8,11 +8,11 @@ public class Deck {
     public static Card[] deck = new Card[108];
 
     public static ImageIcon back =
-            new ImageIcon((new ImageIcon("/Users/alexmamina/Downloads/backofcard.jpg")).
+            new ImageIcon((new ImageIcon("backofcard.jpg")).
                     getImage().getScaledInstance(78,122, Image.SCALE_SMOOTH));
 
     public static Card[] getDeck() {
-            File unoFolder = new File("/Users/alexmamina/Downloads/UNO");
+            File unoFolder = new File("UNO");
             File[] pictures = unoFolder.listFiles();
             int i = 0;
             if (pictures != null) {
@@ -54,6 +54,7 @@ public class Deck {
         return deck;
     }
 
+
     public static String getCardName(ImageIcon image) {
         String result = "";
         for (Card c : deck) {
@@ -65,9 +66,9 @@ public class Deck {
         return result;
     }
 
-    public static Card getCard(ImageIcon image) {
+    public static Card getCard(String n) {
         for (Card c : deck) {
-            if (c.image.equals(image)) {
+            if (c.name.equals(n)) {
                 return c;
             }
         }
