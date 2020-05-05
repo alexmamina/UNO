@@ -18,7 +18,8 @@ public class Server extends GameInterface{
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
 
-            Info inputobject, outputobject;
+            Info inputobject;
+            Object outputobject;
 
 
             //Initiate new conversation with client
@@ -34,9 +35,6 @@ public class Server extends GameInterface{
             while ((inputobject = (Info) in.readObject()) != null) {
                 outputobject = p.processInput(inputobject);
                 out.writeObject(outputobject);
-                if (outputobject.equals("bye")) {
-                    break;
-                }
             }
 
 

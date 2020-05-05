@@ -45,15 +45,14 @@ public class Client extends GameInterface{
 
                         ((JButton) b).setIcon(cs[i].image);
                         b.setName(cs[i].name);
-                        System.out.println(i);
                         i++;
                     }
-                    System.out.println(Game.cardQueue.size());
-                    //fromUser = GameInterface.serverInfos.get(GameInterface.serverInfos.size()-1);
-
+                    Protocol.state = Protocol.MOVE;
                 }
+                System.out.println(Game.cardQueue.size());
+                fromUser = Game.serverInfos.get(Game.serverInfos.size()-1);
                 g.setVisible(true);
-                fromUser = "image set";
+               // fromUser = "image set";
                 if (fromUser != null) {
                     System.out.println("Client: " + fromUser.toString());
                     out.writeObject(fromUser);

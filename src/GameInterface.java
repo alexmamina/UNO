@@ -71,6 +71,7 @@ public abstract class GameInterface extends JFrame {
             } else JOptionPane.showMessageDialog(null, "Wrong card!");
             if (parent.getComponents().length == 0) {
                 String[] ops = {"New game", "Quit"};
+                Game.serverInfos.add(new Info(0,Deck.getCard(played.getName()), "end"));
                 int ans = JOptionPane.showOptionDialog(null, "You have won!","The end",
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, ops, "Quit");
                 if (ans == JOptionPane.YES_OPTION) newGame();

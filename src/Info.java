@@ -18,6 +18,7 @@ public class Info implements Serializable {
     public Info(Queue pile, Card played) {
         this.played = played;
         this.pile = pile;
+        this.message = "";
     }
 
     public Info(int numCards, Card played, String message) {
