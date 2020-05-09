@@ -8,7 +8,7 @@ public class Protocol {
     public static final int UNO = 1;
     public static final int CHALLENGE = 2;
     public static final int MOVE = 3;
-
+    public static final int WAITING = 4;
 
     public static int state = BEGINNING;
 
@@ -29,15 +29,22 @@ public class Protocol {
             output = new Info(Game.cardQueue,
                     Deck.getCard(GameInterface.played.getName()));
             //if input has message uno or challenge move accordingly
-           if (input.getMessage().equals("uno")) state = UNO;
-           else if (input.getMessage().equals("challenge")) state = CHALLENGE;
-
+            if (input.getMessage().equals("uno")) state = UNO;
+            else if (input.getMessage().equals("challenge")) state = CHALLENGE;
+        //} else if (state == WAITING) {
+            if (input.getPlayed() != null) {
+                GameInterface.played.setIcon(input.getPlayed().image);
+                GameInterface.played.setName(input.getPlayed().name);
+                GameInterface.color = GameInterface.played.getName().substring(0, 3);
+                Game.cardQueue = input.getPile();
+            }
         } else if (state == UNO) {
             JOptionPane.showMessageDialog(null, "UNO");
             output = new JOptionPane();
             state = MOVE;
             //show message dialog
-        } else if (state == CHALLENGE) {
+        }
+        else if (state == CHALLENGE) {
             JOptionPane.showMessageDialog(null, "TAKE TWO CARDS");
             state = MOVE;
             //show message dialog, take 2 cards

@@ -34,6 +34,10 @@ public class Server extends GameInterface{
             //Loop through all inputs
             while ((inputobject = (Info) in.readObject()) != null) {
                 outputobject = p.processInput(inputobject);
+//                played.setIcon(inputobject.getPlayed().image);
+  //              played.setName(inputobject.getPlayed().name);
+    //            GameInterface.color = played.getName().substring(0,3);
+      //          Game.cardQueue = inputobject.getPile();
                 out.writeObject(outputobject);
             }
 

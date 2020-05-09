@@ -33,10 +33,10 @@ public class Client extends GameInterface{
             while ((fromServer = in.readObject()) != null) {
                 System.out.println("Server: " + fromServer.toString());
 
-                    played.setIcon(((Info) fromServer).getPlayed().image);
-                    played.setName(((Info) fromServer).getPlayed().name);
-                    GameInterface.color = played.getName().substring(0,3);
-                    Game.cardQueue = ((Info) fromServer).getPile();
+                played.setIcon(((Info) fromServer).getPlayed().image);
+                played.setName(((Info) fromServer).getPlayed().name);
+                GameInterface.color = played.getName().substring(0,3);
+                Game.cardQueue = ((Info) fromServer).getPile();
                 if (Protocol.state == Protocol.BEGINNING) {
                     Card[] cs = Game.dealCards();
                     int i = 0;

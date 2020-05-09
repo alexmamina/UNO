@@ -12,7 +12,7 @@ public class Info implements Serializable {
 
     public Info() {
         numCards = 0;
-        played = new Card(new ImageIcon("/Users/alexmamina/Downloads/backofcard.jpeg"),"default");
+        played = new Card(new ImageIcon("backofcard.jpeg"),"default");
         message = "";
     }
     public Info(Queue pile, Card played) {
@@ -29,7 +29,7 @@ public class Info implements Serializable {
 
     @Override
     public String toString() {
-        return numCards + " card played: " + played + "; message " + message + pile.toString();
+        return "Card played: " + played;
     }
 
     public Queue getPile() {

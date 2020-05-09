@@ -41,7 +41,8 @@ public abstract class GameInterface extends JFrame {
                 parent.repaint();
                 numcards.setText("Cards left: "+ handpanel.getComponents().length);
                 color = newCard.name.substring(0,3);
-
+                Game.serverInfos.add(new Info(Game.cardQueue, Deck.getCard(played.getName())));
+                System.out.println("new info added");
                 if (newCard.name.contains("black")) {
                     String[] cols = {"Green", "Blue", "Yellow", "Red"};
                     int inp = JOptionPane.showOptionDialog(null,"Select the colour you want",
